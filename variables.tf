@@ -16,19 +16,8 @@ variable "valheim_server_name" {
   default     = "ValheimServer"
 }
 
-variable "server_password" {
-  description = "Password for the Valheim server."
-  type        = string
-  default     = "iloveaaron"
-}
-
-variable "world_name" {
-  description = "World name for the Valheim server."
-  type        = string
-  default     = "ValheimWorld"
-}
-
 variable "backup_s3_bucket" {
   description = "S3 bucket name for backups."
   type        = string
+  default     = "terraform-valheim-llanuza-v1"
 }

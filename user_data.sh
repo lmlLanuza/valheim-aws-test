@@ -1,33 +1,30 @@
 #!/bin/bash
-# Update the system and install necessary packages
+
+# Update the system and install necessary dependencies
 apt-get update -y
-apt-get install -y wget curl tar lib32gcc1 libssl-dev
+apt-get upgrade -y
+apt-get install -y curl wget docker.io qemu-user-static
 
-# Create a directory for the Valheim server
-mkdir -p /home/ubuntu/valheim
-cd /home/ubuntu/valheim
+# Start Docker service
+systemctl enable --now docker
 
-# Download the Valheim server files (via SteamCMD, the official method)
-wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
+# Install Valheim Server using Docker
+# Pull the Docker image for Valheim server (official or community-maintained image)
+docker pull lloesche/valheim-server
 
-# Extract SteamCMD and install Valheim server
-tar -xvzf steamcmd_linux.tar.gz
+# Create a directory to store Valheim server configuration and world data
+mkdir -p /home/ubuntu/valheim_data
 
-# Install Valheim using SteamCMD
-./steamcmd.sh +login anonymous +force_install_dir /home/ubuntu/valheim +app_update 896660 validate +quit
-
-# Create a script to start the Valheim server
-cat > /home/ubuntu/valheim/start_valheim_server.sh << 'EOF'
-#!/bin/bash
-# Start the Valheim server
-./valheim_server.x86_64 -name "MyValheimServer" -port 2456 -world "MyWorld" -password "yourpassword" -public 1
-EOF
-
-# Make the start script executable
-chmod +x /home/ubuntu/valheim/start_valheim_server.sh
-
-# Start the Valheim server in the background
-nohup /home/ubuntu/valheim/start_valheim_server.sh &
-
-# Optionally, you can print the server status
-echo "Valheim server is starting..."
+# Run the Valheim server in Docker, passing the necessary environment variables
+docker run -d \
+  --name=valheim-server \
+  -e "SERVER_NAME=LiamValheimServer" \
+  -e "WORLD_NAME=DaTWorld" \
+  -e "SERVER_PASSWORD=iloveaaron69" \
+  -e "PUBLIC=0" \
+  -p 2456:2456/udp \
+  -p 2457:2457/udp \
+  -p 2458:2458/udp \
+  -v /home/ubuntu/valheim_data:/opt/valheim \
+  --restart unless-stopped \
+  lloesche/valheim-server
