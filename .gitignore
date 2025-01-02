@@ -1,0 +1,18 @@
+# Terraform-specific files
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Lock file
+.terraform.lock.hcl
+
+# Crash log files
+crash.log
+
+# Override files
+*.tfvars
+
+# SSH keys
+*.pem
+*.key
+*.pub
