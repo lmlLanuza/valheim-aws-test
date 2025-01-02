@@ -10,11 +10,6 @@ variable "instance_type" {
   default     = "t4g.small"
 }
 
-variable "key_pair_name" {
-  description = "Key pair for SSH access."
-  type        = string
-}
-
 variable "valheim_server_name" {
   description = "Name of the Valheim server."
   type        = string

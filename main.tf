@@ -54,8 +54,11 @@ resource "aws_key_pair" "terraform-valheim" {
 
 resource "aws_s3_bucket" "backup" {
   bucket = var.backup_s3_bucket
+}
 
-  versioning {
-    enabled = true
+resource "aws_s3_bucket_versioning" "versioning" {
+  bucket = aws_s3_bucket.backup.id
+  versioning_configuration {
+    status = "Enabled"
   }
 }
