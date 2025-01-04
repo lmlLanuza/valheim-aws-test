@@ -3,7 +3,21 @@ resource "aws_instance" "valheim_server" {
   instance_type = var.instance_type
   key_name      = aws_key_pair.terraform-valheim.id
 
-  user_data = file("user_data.sh")
+  #user_data = file("user_data.sh")
+  root_block_device {
+    volume_type = "gp3"
+    volume_size = 12 # Adjust as needed
+  }
+
+  instance_market_options {
+    market_type = "spot"
+    spot_options {
+      max_price                      = 0.024
+      instance_interruption_behavior = "stop"
+      spot_instance_type             = "persistent"
+    }
+  }
+
 
   tags = {
     Name = var.valheim_server_name
@@ -18,7 +32,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-arm64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
   }
 }
 
@@ -63,3 +77,5 @@ resource "aws_s3_bucket_versioning" "versioning" {
     status = "Enabled"
   }
 }
+
+

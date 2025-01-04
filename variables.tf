@@ -7,7 +7,7 @@ variable "region" {
 variable "instance_type" {
   description = "EC2 instance type."
   type        = string
-  default     = "t4g.small"
+  default     = "t3.medium"
 }
 
 variable "valheim_server_name" {
