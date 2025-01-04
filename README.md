@@ -53,8 +53,8 @@ After=network.target
 
 [Service]
 User=valheimuser
-WorkingDirectory=/home/valheim/valheim_server
-ExecStart=/home/valheim/valheim_server/start_server.sh
+WorkingDirectory=/home/valheim/steamcmd/valheim_server
+ExecStart=/home/valheim/steamcmd/valheim_server/start_server.sh
 Restart=on-failure
 TimeoutSec=600
 LimitNOFILE=4096
