@@ -52,7 +52,7 @@ Description=Valheim Dedicated Server
 After=network.target
 
 [Service]
-User=valheimuser
+User=valheim
 WorkingDirectory=/home/valheim/steamcmd/valheim_server
 ExecStart=/home/valheim/steamcmd/valheim_server/start_server.sh
 Restart=on-failure
