@@ -4,10 +4,16 @@ variable "region" {
   default     = "ap-southeast-1"
 }
 
+variable "availability_zone" {
+  description = "AWS Availability Zone to deploy the resources."
+  type        = string
+  default     = "ap-southeast-1b"
+}
+
 variable "instance_type" {
   description = "EC2 instance type."
   type        = string
-  default     = "t3.medium"
+  default     = "t3a.medium"
 }
 
 variable "valheim_server_name" {

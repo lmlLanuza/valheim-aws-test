@@ -2,6 +2,7 @@ resource "aws_instance" "valheim_server" {
   ami           = data.aws_ami.valheim-ami-ubuntu.id #Change this to ubuntu.id if you haven't done the instructions in README.md
   instance_type = var.instance_type
   key_name      = aws_key_pair.terraform-valheim.id
+  availability_zone = var.availability_zone
 
   #user_data = file("user_data.sh")
   root_block_device {
@@ -55,6 +56,13 @@ resource "aws_security_group" "valheim_sg" {
     from_port   = 2456
     to_port     = 2458
     protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
