@@ -1,72 +1,59 @@
+# Valheim Dedicated Server Deployment with Terraform
 
-# Installation Guide for Ubuntu
-### Update the system
-```
-sudo apt update && sudo apt upgrade -y
-```
+This repository contains Terraform configurations to deploy an AWS EC2 instance running Ubuntu 20.04.6 LTS, configured as a Valheim dedicated server.
 
-### Install required packages
-```
-sudo apt install lib32gcc-s1 wget tmux -y
-```
+## Prerequisites
 
-### Create a dedicated user for the Valheim server
-```
-sudo adduser --disabled-login valheim
-sudo usermod -aG sudo valheim
-sudo su - valheim
-```
+Before you begin, ensure you have the following:
+- [Terraform](https://www.terraform.io/downloads.html) installed.
+- AWS credentials with permissions to create EC2 instances.
+- An existing SSH key pair to access the EC2 instance.
 
-### Install SteamCMD
-```
-mkdir ~/steamcmd
-cd ~/steamcmd
-wget https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
-tar -xvzf steamcmd_linux.tar.gz 
-```
+## Features
+- Deploys an AWS EC2 instance with:
+  - Ubuntu 20.04.6 LTS.
+  - Instance type and other parameters configurable in `variables.tf` and `main.tf`.
+- Generates a Valheim dedicated server setup script.
 
-### Download the Valheim Dedicated Server
-```
-./steamcmd.sh 
-force_install_dir ./valheim_server
-login anonymous
-app_update 896660 validate
-quit
-```
+## Usage
 
-### Confugure the Valheim Server
- NOTE: Remove the `-crossplay` parameter and add `-public 0` instead
-```
-cd valheim_server
-vim start_server.sh
-chmod +x start_server.sh
-```
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/<your-username>/valheim-terraform.git
+   cd valheim-terraform
+   ```
 
+2. **Initialize Terraform**:
+   ```bash
+   terraform init
+   ```
 
-### Setup and Run the Valheim Server as a Service
+3. **Review and Adjust Variables**:
+   Edit the `variables.tf` file to set your desired instance type, key pair name, and other configurations.
+
+4. **Apply the Configuration**:
+   ```bash
+   terraform apply
+   ```
+   Confirm the changes when prompted. Terraform will output the public IP of the deployed instance.
+
+5. **Access the Instance**:
+   Use SSH to connect to the instance:
+   ```bash
+   ssh -i /path/to/your-key.pem ubuntu@<instance-public-ip>
+   ```
+
+6. **Start the Valheim Server**:
+   Follow the instructions in the instance to start and manage the Valheim server.
+
+## Cleanup
+
+To destroy the deployed resources:
+```bash
+terraform destroy
 ```
-sudo vim /etc/systemd/system/valheim-server.service
+Confirm the changes when prompted.
 
-[Unit]
-Description=Valheim Dedicated Server
-After=network.target
-
-[Service]
-User=valheim
-WorkingDirectory=/home/valheim/steamcmd/valheim_server
-ExecStart=/home/valheim/steamcmd/valheim_server/start_server.sh
-Restart=on-failure
-TimeoutSec=600
-LimitNOFILE=4096
-
-[Install]
-WantedBy=multi-user.target
-```
-
-### Reload the daemon and configure the service to start on boot
-```
-sudo systemctl daemon-reload
-sudo systemctl enable valheim-server.service
-sudo systemctl start valheim-server.service
-sudo systemctl status valheim-server.service
-```
+## Notes
+- Ensure proper security group settings to allow connections to the Valheim server.
+- Regularly back up your Valheim world data.

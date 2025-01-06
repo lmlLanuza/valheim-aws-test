@@ -1,0 +1,17 @@
+[Unit]
+Description=Valheim Dedicated Server
+After=network.target
+
+[Service]
+ExecStartPre=/bin/bash -c '> /home/valheim/steamcmd/valheim_server/logs/valheim_log.txt'
+User=valheim
+WorkingDirectory=/home/valheim/steamcmd/valheim_server
+ExecStart=/home/valheim/steamcmd/valheim_server/start_server.sh
+ExecStop=/bin/kill -SIGINT $MAINPID
+KillSignal=SIGINT
+Restart=on-failure
+TimeoutSec=600
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target

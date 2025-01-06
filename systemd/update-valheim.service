@@ -1,0 +1,14 @@
+[Unit]
+Description=Valheim Dedicated Server Updater
+After=network.target
+
+[Service]
+User=valheim
+WorkingDirectory=/home/valheim/steamcmd/valheim_server
+ExecStart=/home/valheim/steamcmd/valheim_server/update_server.sh
+Restart=on-failure
+TimeoutSec=600
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target
