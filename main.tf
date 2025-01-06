@@ -3,6 +3,7 @@ resource "aws_instance" "valheim_server" {
   instance_type = var.instance_type
   key_name      = aws_key_pair.terraform-valheim.id
   availability_zone = var.availability_zone
+  iam_instance_profile  = aws_iam_instance_profile.valheim_server.name
 
   #user_data = file("user_data.sh")
   root_block_device {
@@ -95,6 +96,48 @@ resource "aws_s3_bucket_versioning" "versioning" {
   versioning_configuration {
     status = "Enabled"
   }
+}
+
+resource "aws_iam_instance_profile" "valheim_server" {
+  name = "valheim_server"
+  role = aws_iam_role.EC2UploadToS3.name
+}
+
+data "aws_iam_policy_document" "assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_role" "EC2UploadToS3" {
+  name               = "EC2UploadToS3"
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+}
+
+data "aws_iam_policy_document" "EC2UploadToS3Policy" {
+  statement {
+    effect    = "Allow"
+    actions   = ["s3:PutObject"]
+    resources = ["arn:aws:s3:::terraform-valheim-llanuza-v1/*"]
+  }
+}
+
+resource "aws_iam_policy" "ValheimServerUploadToS3Policy" {
+  name        = "ValheimServerUploadToS3Policy"
+  description = "Allows the Valheim Dedicated Server to Upload World Files to S3 Bucket"
+  policy      = data.aws_iam_policy_document.EC2UploadToS3Policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "AttachToValheimServer" {
+  role       = aws_iam_role.EC2UploadToS3.name
+  policy_arn = aws_iam_policy.ValheimServerUploadToS3Policy.arn
 }
 
 
