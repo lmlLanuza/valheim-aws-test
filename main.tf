@@ -1,5 +1,5 @@
 resource "aws_instance" "valheim_server" {
-  ami           = data.aws_ami.valheim-ami-ubuntu.id #Change this to ubuntu.id if you haven't done the instructions in README.md
+  ami           = data.aws_ami.valheim-ami.id
   instance_type = var.instance_type
   key_name      = aws_key_pair.terraform-valheim.id
   availability_zone = var.availability_zone
@@ -28,24 +28,15 @@ resource "aws_instance" "valheim_server" {
   vpc_security_group_ids = [aws_security_group.valheim_sg.id]
 }
 
-#Base Ubuntu AMI
-data "aws_ami" "ubuntu" {
+
+# AMI to use, usually the last AMI snapshot of the server
+data "aws_ami" "valheim-ami" {
   most_recent = true
-  owners      = ["099720109477"] # Canonical
+  owners      = [var.valheim_ami_owner] # Canonical
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
-  }
-}
-
-data "aws_ami" "valheim-ami-ubuntu" {
-  most_recent = true
-  owners      = ["self"] # Canonical
-
-  filter {
-    name   = "name"
-    values = ["terraform-valheim-golden-ami"]
+    values = [var.valheim_ami_name]
   }
 }
 
